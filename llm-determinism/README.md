@@ -67,65 +67,18 @@ __To run basic experiments using local and small LLMs, capturing and analysing t
 *   Balanced power and efficiency
 *   Open source with usage restrictions
 
-## Example code
+## Getting started
 
-From [this prompt](#local-llm-logprob-prompt).
+See `notebooks/00_20250219_initial_tests.ipynb`.
 
-```python
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
-
-# Load the model and tokenizer
-model = AutoModelForCausalLM.from_pretrained("microsoft/phi-2")
-tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-2")
-
-# Input text
-input_text = "The capital of France is"
-input_ids = tokenizer(input_text, return_tensors="pt").input_ids
-
-# Set parameters affecting determinism
-gen_kwargs = {
-    "max_new_tokens": 20,
-    "do_sample": True,
-    "temperature": 0.7,
-    "top_p": 0.9,
-    "top_k": 50,
-    "repetition_penalty": 1.2,
-    "no_repeat_ngram_size": 2,
-    "return_dict_in_generate": True,
-    "output_scores": True,
-    "num_return_sequences": 1,
-    "pad_token_id": tokenizer.eos_token_id
-}
-
-# Set a fixed seed for reproducibility
-torch.manual_seed(42)
-
-# Generate text and get log probabilities
-with torch.no_grad():
-    outputs = model.generate(input_ids, **gen_kwargs)
-
-# Extract generated tokens and scores
-generated_tokens = outputs.sequences[0, input_ids.shape[-1]:]
-scores = outputs.scores
-
-# Calculate log probabilities
-log_probs = torch.stack([torch.log_softmax(score, dim=-1) for score in scores])
-token_log_probs = torch.gather(log_probs, -1, generated_tokens.unsqueeze(-1)).squeeze(-1)
-
-# Print results
-print("Generated text:")
-print(tokenizer.decode(generated_tokens, skip_special_tokens=True))
-print("\nTokens and their log probabilities:")
-for token, log_prob in zip(generated_tokens, token_log_probs):
-    print(f"Token: {tokenizer.decode(token)}, Log Probability: {log_prob.item():.4f}")
-```
 
 ## Appendix
 
 ### Perplexity prompts and results
 
 #### Local LLM logprob prompt
+
+Note that the example given does not work. Refer to  `notebooks/00_20250219_initial_tests.ipynb` for a working example.
 
 > Can you show examples with phi2 of retrieving log probabilities while also changing all the possible parameters that affect determinism]
 
