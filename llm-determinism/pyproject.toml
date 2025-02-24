@@ -12,6 +12,8 @@ dependencies = [
     "pandas>=2.2.3",
     "transformers>=4.49.0",
     "iprogress>=0.4",
+    "numpy>=2.2.3",
+    "matplotlib>=3.10.0",
 ]
 
 [project.scripts]
@@ -33,3 +35,6 @@ attr = "llm_determinism.__version__"
 [tool.setuptools.packages.find]
 where = [ "src",]
 namespaces = false
+
+[tool.kedro_telemetry]
+project_id = "2d532492f5c343a0b642a5092993e346"
